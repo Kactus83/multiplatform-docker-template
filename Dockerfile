@@ -10,7 +10,9 @@ COPY Cargo.toml Cargo.lock ./
 # Copy the source code into the container
 COPY . .
 
-# Install dependencies (Required by diesel)
+# Install dependencies (for example, libraries required by diesel)
+# You need to specify into exportedlibs the name of libs you want to keep into distroless image
+# The libs will be stored to be transferred without worrying about the architecture of the machine that runs the script.
 RUN apt-get update && apt-get install libpq5 -y && \
     mkdir -p temp_libs && \
     export LIBS="libpq.so* libgssapi_krb5.so* libldap_r-2.4.so* libkrb5.so* libk5crypto.so* libkrb5support.so* liblber-2.4.so* libsasl2.so* libgnutls.so* libp11-kit.so* libidn2.so* libunistring.so* libtasn1.so* libnettle.so* libhogweed.so* libgmp.so* libffi.so* libcom_err.so* libkeyutils.so*" && \
