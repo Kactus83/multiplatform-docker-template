@@ -14,11 +14,15 @@ COPY . .
 # You need to specify into exportedlibs the name of libs you want to keep into distroless image
 # The libs will be stored to be transferred without worrying about the architecture of the machine that runs the script.
 RUN apt-get update && apt-get install libpq5 -y && \
+    # Tempprary folder for process
     mkdir -p temp_libs && \
+    # Libs that should be exported to distroless image
     export LIBS="libpq.so* libgssapi_krb5.so* libldap_r-2.4.so* libkrb5.so* libk5crypto.so* libkrb5support.so* liblber-2.4.so* libsasl2.so* libgnutls.so* libp11-kit.so* libidn2.so* libunistring.so* libtasn1.so* libnettle.so* libhogweed.so* libgmp.so* libffi.so* libcom_err.so* libkeyutils.so*" && \
+    # Find libs & Copy with parent folders
     for lib in $LIBS; do \
         find /usr/lib -name "$lib" -exec cp --parents {} ./temp_libs \;; \
     done && \
+    # Move libs in exportedlibs folder in order to move them to distroless image in stage 2
     mkdir -p exportedlibs && \
     mv temp_libs/usr/lib/* ./exportedlibs && \
     rm -r temp_libs
